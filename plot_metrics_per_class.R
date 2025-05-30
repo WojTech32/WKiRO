@@ -9,7 +9,7 @@ plot_metrics_per_class <- function(results_df, model_name = "Model") {
   
   ggplot(results_long, aes(x = Class, y = Value, fill = Model)) +
     geom_boxplot(outlier.shape = 21, outlier.size = 1.5, alpha = 0.8) +
-    facet_wrap(~ Metric, scales = "free_y", ncol = 3) +
+    facet_wrap(~ Metric, scales = "free_y", ncol = 2) +
     theme_minimal(base_size = 12) +
     labs(
       title = paste("Rozkład metryk per klasa -", model_name),

@@ -1,4 +1,7 @@
 run_repeated_evaluation <- function(true, pred, fraction = 0.6, n_reps = 10) {
+  library(dplyr)
+  library(tidyr)
+  
   stopifnot(length(true) == length(pred))
   
   all_results <- list()
