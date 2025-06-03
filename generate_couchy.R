@@ -29,5 +29,5 @@ generuj_dane_cauchy <- function(n = 200, center1 = c(-5, -5), center2 = c(5, 5),
   return(wszystkie_punkty)
 }
 
-#Przykladowe wywolanie
+# Przykladowe wywolanie
 grupa <- generuj_dane_cauchy(n=100, center1=c(-3, -3), center2=c(3, 3))
