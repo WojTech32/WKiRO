@@ -5,7 +5,8 @@ IQR_Median_plot <- function(results_df) {
   
   # --- Przekształcenie danych do formatu długiego ---
   results_long <- results_df |>
-    pivot_longer(cols = -c(Class, Iteration), names_to = "Metric", values_to = "Value")
+    pivot_longer(cols = -c(Class, Iteration),
+                 names_to = "Metric", values_to = "Value")
   
   # --- Podsumowanie: mediany i IQR ---
   summary_df <- results_long |>

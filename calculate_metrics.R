@@ -18,8 +18,7 @@ calculate_metrics <- function(true, pred) {
     recall    <- ifelse((TP + FN) == 0, NA, TP / (TP + FN))  # Sensitivity
     specificity <- ifelse((TN + FP) == 0, NA, TN / (TN + FP))
     accuracy <- (TP + TN) / (TP + TN + FP + FN)
-    f1 <- ifelse(is.na(precision) | is.na(recall) | (precision + recall == 0), NA,
-                 2 * precision * recall / (precision + recall))
+    f1 <- ifelse((TP + FP + FN) == 0, NA, (2*TP) / (2*TP + FP + FN))
     iou <- ifelse((TP + FP + FN) == 0, NA, TP / (TP + FP + FN))
     
     denom <- sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
