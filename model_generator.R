@@ -27,7 +27,7 @@ generate_models <-function(data,data_name){
     nb = nb_pred
   )
   
-  saveRDS(results, file = "cauchy_model_predictions.rds")
+  saveRDS(results, file = paste0(data_name,"_model_predictions.rds"))
   
   results <- data.frame(label = test_data$group)
   
@@ -39,6 +39,6 @@ generate_models <-function(data,data_name){
     results[[paste0("prob_nb_", cls)]] <- nb_probs[, cls]
   }
   
-  saveRDS(results, file = "cauchy_prob_predictions.rds")
+  saveRDS(results, file = paste0(data_name,"_prob_predictions.rds"))
   
 }
