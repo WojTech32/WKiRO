@@ -12,27 +12,33 @@ generate_models <-function(data,data_name){
   
   
   ## SVM
-  svm_model <- svm(group ~ ., data = train_data, kernel = "radial")
-  svm_pred <- predict(svm_model, test_data)
+  svm_model <- svm(group ~ ., data = train_data, kernel = "radial", probability = TRUE)
+  svm_pred <- predict(svm_model, test_data, probability = TRUE)
+  svm_probs <- attr(svm_pred, "probabilities")
   
   ## Naive Bayes
   nb_model <- naiveBayes(group ~ ., data = train_data)
   nb_pred <- predict(nb_model, test_data)
-  
+  nb_probs <- predict(nb_model, test_data, type = "raw")
   
   results <- data.frame(
     label = test_data$group,
     svm = svm_pred,
     nb = nb_pred
   )
-  saveRDS(results, file = sprintf("\n=== %s ===\n", data_name))
-  return(list(
-    svm_model = svm_model,
-    svm_pred = svm_pred,
-    nb_model = nb_model,
-    nb_pred = nb_pred,
-    test_labels = test_data$group,
-    results = results
-  ))
+  
+  saveRDS(results, file = "cauchy_model_predictions.rds")
+  
+  results <- data.frame(label = test_data$group)
+  
+  for (cls in colnames(svm_probs)) {
+    results[[paste0("prob_svm_", cls)]] <- svm_probs[, cls]
+  }
+  
+  for (cls in colnames(nb_probs)) {
+    results[[paste0("prob_nb_", cls)]] <- nb_probs[, cls]
+  }
+  
+  saveRDS(results, file = "cauchy_prob_predictions.rds")
   
 }
