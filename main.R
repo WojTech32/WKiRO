@@ -12,6 +12,8 @@ source("IQR_Median_plot.R")
 source("plot_metrics_point_summary.R")
 source("plot_metric_heatmap.R")
 source("plot_metric_correlation.R")
+source("plot_multiclass_roc_median_sd.R")
+
 
 data <- read.csv("acc_stability_multiclass_text.csv")
 
@@ -28,6 +30,7 @@ IQR_Median_plots <- list()
 plot_Median_plots <- list()
 correlation_plots <- list()
 
+#Pętla po predykcjach, w której mierzone są metryki
 for (model_col in model_cols) {
  prediction <- as.factor(data[[model_col]])
 
@@ -53,8 +56,32 @@ for (model_col in model_cols) {
   heatmap_plots[[model_col]] <- p
 }
 
+df <- read.csv("roc_multiclass_text_multimod.csv")
 
-print(heatmap_plots$xgb$F1)
+df$true_label <- as.factor(df$id)  # Zmień nazwę jeśli trzeba
+
+all_prob_cols <- grep("^prob_", names(df), value = TRUE) #Wykrywanie modeli
 
 
+models <- unique(gsub("^prob_([^_]+)_.*$", "\\1", all_prob_cols)) # Wyciągamy nazwy modeli np. "RF", "SVM"
+
+ROC_plots <- list()
+
+for (model in models) {
+  # Wybierz kolumny danego modelu
+  model_cols <- grep(paste0("^prob_", model, "_"), names(df), value = TRUE)
+  
+  # Tworzymy macierz z predykcjami
+  prob_matrix <- df[, model_cols]
+  class_names <- gsub(paste0("^prob_", model, "_"), "", model_cols)
+  colnames(prob_matrix) <- class_names
+  
+  # Obliczamy krzywe ROC
+  ROC_plots[[model]] <- plot_multiclass_roc_median_sd(true_label = df$id,
+                                prob_matrix = prob_matrix,
+                                n_reps = 10,
+                                seed = 123,model)
+  
+}
+print(ROC_plots$rf)
 
