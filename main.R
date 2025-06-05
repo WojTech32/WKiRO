@@ -14,47 +14,43 @@ source("plot_metric_heatmap.R")
 source("plot_metric_correlation.R")
 source("plot_multiclass_roc_median_sd.R")
 
+data <- readRDS("poisson_model_predictions.rds")
+colnames(data)
 
-data <- read.csv("acc_stability_multiclass_text.csv")
+# Przykład użycia:
+true_col <- colnames(data)[1]
+model_cols <- colnames(data)[-1]
 
-column_names <- colnames(data)
-true_label_col <- column_names[1]
-model_cols <- column_names[-1]
+plot <- plot_metrics_per_class(
+  true_label_col = true_col,
+  model_cols = model_cols,
+  data = data
+)
+print(plot)
 
-data$true_label <- as.factor(data[[true_label_col]])
 
-# Lista na wyniki
-all_results <- list()
-heatmap_plots <- list()
+
+heatmap_results <- plot_metric_heatmap_all_models(
+  true_label_col = true_col,
+  model_cols = model_cols,
+  data = data
+)
+print(heatmap_results$svm$Precision)
+
 IQR_Median_plots <- list()
-plot_Median_plots <- list()
 correlation_plots <- list()
 
-#Pętla po predykcjach, w której mierzone są metryki
-for (model_col in model_cols) {
- prediction <- as.factor(data[[model_col]])
-
- eval_result <- run_repeated_evaluation(data$true_label, prediction, fraction = 0.7, n_reps = 10)
- 
- model_results <- eval_result$raw
- model_results$Model <- model_col
- 
- all_results[[model_col]] <- model_results
- IQR_Median_plots[[model_col]] <- IQR_Median_plot(eval_result$raw)
- correlation_plots[[model_col]] <- plot_metric_correlation(eval_result$raw)
-}
-print(correlation_plots$xgb)
-print(IQR_Median_plots$rf$panel_a)
-
-combined_results <- do.call(rbind, all_results)
-plot_metrics_per_class(combined_results, model_name = paste(model_cols, collapse = " vs "))
 
 for (model_col in model_cols) {
   prediction <- as.factor(data[[model_col]])
+  eval_result <- run_repeated_evaluation(data$label, prediction, fraction = 0.7, n_reps = 10)
   
-  p <- plot_metric_heatmap(data$true_label, prediction,model_col)
-  heatmap_plots[[model_col]] <- p
+  IQR_Median_plots[[model_col]] <- IQR_Median_plot(eval_result$raw)
+  correlation_plots[[model_col]] <- plot_metric_correlation(eval_result$raw)
 }
+
+
+
 
 df <- read.csv("roc_multiclass_text_multimod.csv")
 
