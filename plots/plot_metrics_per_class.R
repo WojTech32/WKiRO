@@ -24,7 +24,8 @@ plot_metrics_per_class <- function(true_label_col, model_cols, data, fraction = 
   
   plot <- ggplot(results_long, aes(x = Class, y = Value, fill = Model)) +
     geom_boxplot(outlier.shape = 21, outlier.size = 1.5, alpha = 0.8) +
-    facet_wrap(~ Metric, scales = "free_y", ncol = 2) +
+    facet_wrap(~ Metric, scales = "fixed", ncol = 2) + 
+    ylim(0, 1) +  
     theme_minimal(base_size = 12) +
     labs(
       title = paste("Rozkład metryk per klasa -", paste(model_cols, collapse = " vs ")),
@@ -36,5 +37,6 @@ plot_metrics_per_class <- function(true_label_col, model_cols, data, fraction = 
       strip.text = element_text(face = "bold"),
       axis.text.x = element_text(angle = 45, hjust = 1)
     )
-  return (plot);
+  
+  return(plot)
 }
