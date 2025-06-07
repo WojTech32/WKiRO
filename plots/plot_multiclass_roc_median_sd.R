@@ -18,7 +18,6 @@ plot_multiclass_roc_median_sd <- function(true_label, prob_matrix, n_reps = 10, 
       binary_true <- as.integer(true_label[idx] == cls)
       scores <- prob_matrix[idx, cls]
       
-      # Pomijamy jeśli tylko jedna klasa (0 lub 1)
       if (length(unique(binary_true)) < 2) next
       
       roc_obj <- roc(binary_true, scores, quiet = TRUE)
@@ -32,7 +31,6 @@ plot_multiclass_roc_median_sd <- function(true_label, prob_matrix, n_reps = 10, 
       interp_matrix[i, ] <- interp_tpr
     }
     
-    # Jeżeli nie ma żadnych poprawnych pomiarów – pomiń klasę
     if (length(aucs) == 0) next
     
     tpr_median <- apply(interp_matrix, 2, median, na.rm = TRUE)
@@ -53,9 +51,8 @@ plot_multiclass_roc_median_sd <- function(true_label, prob_matrix, n_reps = 10, 
       SD = round(sd(aucs, na.rm = TRUE), 2)
     ))
   }
-  
-  # Jeśli nadal brak danych – przerwij
-  if (length(all_curves) == 0) stop("Brak danych do wygenerowania krzywej ROC")
+
+  if (length(all_curves) == 0) stop("No data to generate ROC curve")
   
   roc_df <- bind_rows(all_curves)
   

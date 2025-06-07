@@ -1,6 +1,7 @@
 run_repeated_evaluation <- function(true, pred, fraction = 0.7, n_reps = 10, seed = 123) {
   library(dplyr)
   library(tidyr)
+  source("plots/calculate_metrics.R")
   
   stopifnot(length(true) == length(pred))
   

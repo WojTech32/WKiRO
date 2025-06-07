@@ -5,7 +5,7 @@ plot_metric_heatmap_all_models <- function(true_label_col, model_cols,
   library(dplyr)
   library(tidyr)
   library(ggplot2)
-  source("run_repeated_evaluation.R")
+  source("plots/run_repeated_evaluation.R")
   
   all_heatmaps <- list()
   
