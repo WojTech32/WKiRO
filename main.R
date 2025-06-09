@@ -26,16 +26,18 @@ source("model_generator.R")
 
 
 #data generate
+generated_multiclass_gauss <- generate_multiclass_gaussian_data(n = 200, list(c(-5, -5), c(5, 5)), range = 25)
 generated_multiclass_poisson <- generate__multiclass_poisson_data(n = 200, list(c(-5, -5), c(5, 5)), range = 25)
-generated_multiclass_cauchy <- generate_multiclass_cauchy_data(n = 200, list(c(-5, -5), c(5, 5), c(-5, -20)), range = 25)
+generated_multiclass_cauchy <- generate_multiclass_cauchy_data(n = 200, list(c(-5, -5), c(2, 2), c(20, 20)), range = 25)
 genereted_bin_poisson <- generate_poisson_data(n = 200, lambda1 = c(5, 5), lambda2 = c(10, 10), range = 25)
 
 #Prediction
+gauss_prediction <- generate_models(generated_multiclass_gauss, "gauss_multiclass")
 poisson_prediction <- generate_models(genereted_bin_poisson, "poisson_binary")
 cauchy_prediction <- generate_models(generated_multiclass_cauchy, "cauchy_multiclass")
 
 #set to create plots
-data <- cauchy_prediction$results_labels
+data <- gauss_prediction$results_labels
 
 #data <- readRDS("data/poisson_model_predictions.rds")
 
@@ -63,16 +65,16 @@ heatmap_results <- plot_metric_heatmap_all_models(
   fractions = seq(0.4, 0.9, by = 0.1),
   reps = seq(10, 100, by = 10)
 )
-print(heatmap_results$svm$Accuracy)
+print(heatmap_results$nb$Precision)
 
 correlation_results <- plot_metric_correlation(data, true_col, model_cols)
 print(correlation_results$nb)
 
 iqr_plots <- IQR_Median_plot(data, true_col, model_cols)
-print(iqr_plots$svm)
+print(iqr_plots$nb$median)
 
 #ROC plot
-df <- poisson_prediction$results_probs
+df <- gauss_prediction$results_probs
 
 roc_plots <- generate_all_multiclass_roc_plots(true_label = df$label, df = df)
 
